@@ -1,0 +1,5 @@
+module CMarkdownCore {
+    header "MarkdownCore.h"
+    link "markdown_core"
+    export *
+}

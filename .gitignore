@@ -1,0 +1,14 @@
+# Build output
+/target
+/dist
+/.build
+core/target
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor
+.vscode/
+*.swp
+*.swo
