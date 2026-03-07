@@ -76,9 +76,9 @@ cat > "$APP_BUNDLE/Contents/Info.plist" << PLIST
 <dict>
     <key>CFBundleExecutable</key>          <string>MarkdownViewer</string>
     <key>CFBundleIconFile</key>            <string>AppIcon</string>
-    <key>CFBundleIdentifier</key>          <string>com.local.markdown-viewer</string>
-    <key>CFBundleName</key>                <string>Markdown Viewer</string>
-    <key>CFBundleDisplayName</key>         <string>Markdown Viewer</string>
+    <key>CFBundleIdentifier</key>          <string>com.local.markdownish</string>
+    <key>CFBundleName</key>                <string>Markdownish</string>
+    <key>CFBundleDisplayName</key>         <string>Markdownish</string>
     <key>CFBundlePackageType</key>         <string>APPL</string>
     <key>CFBundleVersion</key>             <string>$BUILD</string>
     <key>CFBundleShortVersionString</key>  <string>$VERSION</string>

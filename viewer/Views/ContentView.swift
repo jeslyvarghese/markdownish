@@ -153,7 +153,7 @@ struct WelcomeView: View {
                 .foregroundStyle(.tertiary)
 
             VStack(spacing: 6) {
-                Text("Markdown Viewer")
+                Text("Markdownish")
                     .font(.system(size: 22, weight: .semibold, design: .serif))
                 Text("Open a file to begin reading")
                     .font(.system(size: 14))

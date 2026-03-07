@@ -8,9 +8,9 @@ ROOT="$(dirname "$SCRIPT_DIR")"
 DIST="$ROOT/dist"
 APP_NAME="MarkdownViewer"
 APP_BUNDLE="$DIST/$APP_NAME.app"
-DMG_NAME="$APP_NAME.dmg"
+DMG_NAME="Markdownish.dmg"
 DMG_PATH="$DIST/$DMG_NAME"
-VOLUME_NAME="Markdown Viewer"
+VOLUME_NAME="Markdownish"
 
 # ── 1. Build universal app bundle ────────────────────────────────────────────
 if [[ "${1:-}" != "--skip-build" ]]; then
@@ -59,4 +59,4 @@ echo ""
 echo "✓ DMG ready → $DMG_PATH  ($SIZE)"
 echo ""
 echo "To install: open \"$DMG_PATH\""
-echo "            drag Markdown Viewer → Applications"
+echo "            drag Markdownish → Applications"

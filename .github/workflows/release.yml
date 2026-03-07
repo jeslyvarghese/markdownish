@@ -39,6 +39,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: Markdown Viewer ${{ github.ref_name }}
-          files: dist/MarkdownViewer.dmg
+          files: dist/Markdownish.dmg
           generate_release_notes: true
           fail_on_unmatched_files: true

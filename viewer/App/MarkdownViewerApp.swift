@@ -5,7 +5,7 @@ struct MarkdownViewerApp: App {
     @State private var appState = AppState()
 
     var body: some Scene {
-        Window("Markdown Viewer", id: "main") {
+        Window("Markdownish", id: "main") {
             ContentView()
                 .environment(appState)
                 .frame(minWidth: 500, minHeight: 400)
