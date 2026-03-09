@@ -163,22 +163,33 @@ enum DocumentAttributedStringBuilder {
         anchors: inout [String: Int]
     ) -> NSAttributedString {
         let result = NSMutableAttributedString()
+        let indent: CGFloat = 26
         let ps = NSMutableParagraphStyle()
-        ps.headIndent          = 20
-        ps.firstLineHeadIndent = 20
+        ps.headIndent          = indent
+        ps.firstLineHeadIndent = indent
         ps.tailIndent          = -4
-        ps.lineSpacing         = config.fontSize * 0.35
+        ps.lineSpacing         = config.fontSize * 0.45
         ps.paragraphSpacing    = config.paraGap
+        ps.paragraphSpacingBefore = 4
 
         for (i, block) in blocks.enumerated() {
             if i > 0 { result.append(gap(config.paraGap, config: config)) }
-            appendBlock(block, to: result, anchors: &anchors, config: config, indent: 20)
+            appendBlock(block, to: result, anchors: &anchors, config: config, indent: Int(indent))
         }
 
-        // Apply blockquote border via paragraph background (approximated with bg color)
-        let bg = nsColor(config.theme.blockquoteBgColor)
-        result.addAttribute(.backgroundColor, value: bg,
-                            range: NSRange(location: 0, length: result.length))
+        let bg      = nsColor(config.theme.blockquoteBgColor)
+        let fullRange = NSRange(location: 0, length: result.length)
+        result.addAttribute(.backgroundColor, value: bg, range: fullRange)
+
+        // Italic + muted text colour for the entire quote
+        let fs       = config.fontSize
+        let italic   = NSFont(name: "Georgia-Italic", size: fs)
+                    ?? NSFont(name: "Georgia", size: fs)
+                    ?? NSFont.systemFont(ofSize: fs)
+        let mutedCol = nsColor(config.theme.blockquoteBorderColor)
+        result.addAttribute(.font,            value: italic,   range: fullRange)
+        result.addAttribute(.foregroundColor, value: mutedCol, range: fullRange)
+        result.addAttribute(.paragraphStyle,  value: ps,       range: fullRange)
         return result
     }
 

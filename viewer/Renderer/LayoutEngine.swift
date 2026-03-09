@@ -154,7 +154,7 @@ enum LayoutEngine {
             let lines = max(code.components(separatedBy: "\n").count, 1)
             return CGFloat(lines) * (CTFontGetAscent(mono) + CTFontGetDescent(mono) + config.lineSpacingAdd) + 24
         case .blockQuote(let blocks):
-            return blocks.reduce(0) { $0 + blockHeight($1, config: config) + config.paraGap } + 24
+            return blocks.reduce(0) { $0 + blockHeight($1, config: config) + config.paraGap } + 36
         case .bulletList(let items), .orderedList(_, let items):
             return items.reduce(0) { $0 + itemHeight($1, config: config) }
         case .horizontalRule:
@@ -273,19 +273,58 @@ private final class BlockRenderer {
     }
 
     private func renderBlockQuote(_ blocks: [MarkdownBlock], y: CGFloat) -> CGFloat {
-        let indent  = CGFloat(20)
+        let padV:    CGFloat = 18
+        let padH:    CGFloat = 22
+        let barW:    CGFloat = 4
+        let radius:  CGFloat = 10
+        let accentColor      = cfg.theme.headingColor
+
         let contentH = blocks.reduce(CGFloat(0)) {
             $0 + LayoutEngine.blockHeight($1, config: cfg) + cfg.paraGap
         }
-        let totalH = contentH + 24
+        let totalH = contentH + padV * 2
 
-        ctx.setFillColor(cfg.theme.blockquoteBorderColor)
-        ctx.fill(CGRect(x: x, y: y, width: 3, height: totalH))
+        ctx.saveGState()
+
+        // ── Background rounded rect ───────────────────────────────────────────
+        let bgRect = CGRect(x: x, y: y, width: cfg.contentWidth, height: totalH)
+        let bgPath = CGPath(roundedRect: bgRect, cornerWidth: radius, cornerHeight: radius, transform: nil)
         ctx.setFillColor(cfg.theme.blockquoteBgColor)
-        ctx.fill(CGRect(x: x + 3, y: y, width: cfg.contentWidth - 3, height: totalH))
+        ctx.addPath(bgPath)
+        ctx.fillPath()
 
-        var innerY = y + 12
-        let sub    = BlockRenderer(ctx: ctx, config: cfg, x: x + indent)
+        // ── Subtle border ─────────────────────────────────────────────────────
+        ctx.setStrokeColor(withAlpha(accentColor, 0.18))
+        ctx.setLineWidth(1)
+        ctx.addPath(bgPath)
+        ctx.strokePath()
+
+        // ── Accent bar (left, rounded corners) ───────────────────────────────
+        let barRect = CGRect(x: x, y: y, width: barW, height: totalH)
+        let barPath = CGPath(roundedRect: barRect, cornerWidth: barW / 2, cornerHeight: barW / 2, transform: nil)
+        ctx.setFillColor(accentColor)
+        ctx.addPath(barPath)
+        ctx.fillPath()
+
+        // ── Decorative quote glyph (top-right) ───────────────────────────────
+        let quoteFont  = CTFontCreateWithName("Georgia" as CFString, cfg.fontSize * 2.8, nil)
+        let quoteAttrs = [kCTFontAttributeName: quoteFont,
+                          kCTForegroundColorAttributeName: withAlpha(accentColor, 0.12)] as CFDictionary
+        let quoteStr   = CFAttributedStringCreate(nil, "\u{201C}" as CFString, quoteAttrs)!
+        let quoteLine  = CTLineCreateWithAttributedString(quoteStr)
+        let quoteW     = CTLineGetTypographicBounds(quoteLine, nil, nil, nil)
+        ctx.saveGState()
+        ctx.textMatrix = CGAffineTransform(scaleX: 1, y: -1)
+        ctx.textPosition = CGPoint(x: x + cfg.contentWidth - quoteW - 14,
+                                   y: y + CTFontGetAscent(quoteFont) + 8)
+        CTLineDraw(quoteLine, ctx)
+        ctx.restoreGState()
+
+        ctx.restoreGState()
+
+        // ── Inner blocks ──────────────────────────────────────────────────────
+        var innerY = y + padV
+        let sub    = BlockRenderer(ctx: ctx, config: cfg, x: x + barW + padH)
         for block in blocks {
             innerY += sub.renderBlock(block, y: innerY) + cfg.paraGap
         }
